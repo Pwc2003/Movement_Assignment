@@ -25,13 +25,14 @@ namespace Movement
 	{
 		// your private fields here (rotSpeed, thrustForce)
 		private float rotSpeed;
-		// private float thrustForce;
+		private float thrustForce;
+
 
 		// constructor + call base constructor
 		public SpaceShip() : base("resources/spaceship.png")
 		{
 			rotSpeed = (float)Math.PI; // rad/second
-			// thrustForce = 500;
+			thrustForce = 10;
 
 			Position = new Vector2(Settings.ScreenSize.X / 2, Settings.ScreenSize.Y / 2);
 			Color = Color.YELLOW;
@@ -80,6 +81,8 @@ namespace Movement
 			// TODO implement
 			Color = Color.ORANGE;
 			// use thrustForce somewhere here
+			Position = Position + new Vector2(thrustForce * (float)Math.Cos(Rotation), thrustForce * (float)Math.Sin(Rotation));
+			
 		}
 
 		public void NoThrust()

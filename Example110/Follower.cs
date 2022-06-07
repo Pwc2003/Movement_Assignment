@@ -36,34 +36,23 @@ namespace Movement
 		// Update is called every frame
 		public override void Update(float deltaTime)
 		{
-			Follow(deltaTime);
-			BounceEdges();
+			Follow();
+			Move(deltaTime);
 		}
 
 		// your own private methods
-		private void Follow(float deltaTime)
+		private void Follow()
 		{
 			Vector2 mouse = Raylib.GetMousePosition();
 			// Console.WriteLine(mouse);
+			Vector2 dir = mouse - Position;
+			Acceleration = Vector2.Normalize(dir) * 1000;
+
 			
-			Position = mouse; // incorrect!!
+			//Position = mouse; // incorrect!!
 
 			// TODO implement
 			// Position += Velocity * deltaTime;
-		}
-
-		private void BounceEdges()
-		{
-			float scr_width = Settings.ScreenSize.X;
-			float scr_height = Settings.ScreenSize.Y;
-			float spr_width = TextureSize.X;
-			float spr_heigth = TextureSize.Y;
-
-			// TODO implement...
-			if (Position.X > scr_width)
-			{
-				// ...
-			}
 		}
 
 	}

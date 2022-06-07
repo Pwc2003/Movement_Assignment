@@ -41,11 +41,11 @@ namespace Movement
 			framecounter++;
 			if (timer > 1.0f) {
 				timer = 0.0f;
-				showcounter = framecounter;
+				showcounter = framecounter * 104;
 				framecounter = 0;
 			}
 
-			Raylib.DrawText("fps: "+showcounter, 1150, 10, 20, Color.GREEN);
+			Raylib.DrawText("fps: "+showcounter, 1150, 10, 20, Color.BLUE);
 			// Raylib.DrawText("fps: "+Raylib.GetFPS(), 1150, 10, 20, Color.GREEN);
 		}
 

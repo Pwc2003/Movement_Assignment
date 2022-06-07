@@ -24,6 +24,9 @@ namespace Movement
 	class Pointer : SpriteNode
 	{
 		// your private fields here (add Velocity, Acceleration, and MaxSpeed)
+		private Vector2 Acceleration;
+		private Vector2 Velocity;
+		float MaxSpeed = 1000;
 
 
 		// constructor + call base constructor
@@ -36,24 +39,39 @@ namespace Movement
 		// Update is called every frame
 		public override void Update(float deltaTime)
 		{
-			PointToMouse(deltaTime);
+			Follow(deltaTime);
 			BounceEdges();
 		}
 
 		// your own private methods
-		private void PointToMouse(float deltaTime)
+		private void Follow(float deltaTime)
 		{
-			// Or just implement it in Example 110 Follower
-
 			Vector2 mouse = Raylib.GetMousePosition();
-			// Console.WriteLine(mouse);
+			
+			Vector2 direction = mouse - Position;
 
-			Position = mouse; // incorrect!!
+			float distance = Vector2.Distance(mouse, Position);
 
-			Rotation += deltaTime * Math.PI;  // incorrect!!
+			if(Position != mouse)
+			{
+				Vector2.Normalize(direction);
 
-			// TODO implement
-			// Position += Velocity * deltaTime;
+				Acceleration = direction;
+				
+				if (Velocity.X > MaxSpeed || Velocity.X < MaxSpeed) {
+					Velocity.X += Acceleration.X * deltaTime * 2;
+				} else if (Velocity.X > -MaxSpeed && Velocity.X < -MaxSpeed) {
+					Velocity.X -= Acceleration.X * deltaTime * 2;
+				} if (Velocity.Y < MaxSpeed || Velocity.Y > MaxSpeed) {
+					Velocity.Y += Acceleration.Y * deltaTime * 2;
+				} else if (Velocity.Y > -MaxSpeed && Velocity.Y < -MaxSpeed) {
+					Velocity.Y -= Acceleration.Y * deltaTime * 2;
+				}
+
+				Position += Velocity * deltaTime;
+				Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+				Acceleration *= 0;
+			}
 		}
 
 		private void BounceEdges()
@@ -61,14 +79,32 @@ namespace Movement
 			float scr_width = Settings.ScreenSize.X;
 			float scr_height = Settings.ScreenSize.Y;
 			float spr_width = TextureSize.X;
-			float spr_heigth = TextureSize.Y;
+			float spr_height = TextureSize.Y;
 
-			// TODO implement...
-			if (Position.X > scr_width)
+            if (Position.X + spr_width / 2 > scr_width)
+            {
+				Position = new Vector2(scr_width - spr_width / 2, Position.Y);
+				Color = Color.RED;
+            }
+            else if (Position.X - spr_width / 2 < 0)
+            {
+				Position = new Vector2(spr_width / 2, Position.Y);
+				Color = Color.BLUE;
+            }
+            if (Position.Y + spr_height / 2 > scr_height)
+            {
+				Position = new Vector2(Position.X, scr_height - spr_height / 2);
+				Color = Color.GREEN;
+            }
+            else if (Position.Y - spr_height / 2 < 0)
+            {
+				Position = new Vector2(Position.X, spr_height / 2);
+				Color = Color.YELLOW;
+            }
+			if (Position.X > scr_width || Position.X < 0 || Position.Y > scr_height || Position.Y < 0)
 			{
-				// ...
+				Position = new Vector2(scr_width / 2, scr_height / 2);
 			}
 		}
-
 	}
 }
