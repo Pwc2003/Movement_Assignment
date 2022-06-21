@@ -21,12 +21,11 @@ Methods:
 
 namespace Movement
 {
-	class Pointer : SpriteNode
+	class Pointer : MoverNode
 	{
 		// your private fields here (add Velocity, Acceleration, and MaxSpeed)
-		private Vector2 Acceleration;
-		private Vector2 Velocity;
-		float MaxSpeed = 1000;
+		private float maxDistance;
+		private float MaxSpeed = 200f;
 
 
 		// constructor + call base constructor
@@ -39,13 +38,14 @@ namespace Movement
 		// Update is called every frame
 		public override void Update(float deltaTime)
 		{
-			Follow(deltaTime);
-			BounceEdges();
+			PointToMouse(deltaTime);
+			Velocity = Limit(Velocity);
 		}
 
 		// your own private methods
-		private void Follow(float deltaTime)
+		private void PointToMouse(float deltaTime)
 		{
+
 			Vector2 mouse = Raylib.GetMousePosition();
 			
 			Vector2 direction = mouse - Position;
@@ -57,54 +57,15 @@ namespace Movement
 				Vector2.Normalize(direction);
 
 				Acceleration = direction;
-				
-				if (Velocity.X > MaxSpeed || Velocity.X < MaxSpeed) {
-					Velocity.X += Acceleration.X * deltaTime * 2;
-				} else if (Velocity.X > -MaxSpeed && Velocity.X < -MaxSpeed) {
-					Velocity.X -= Acceleration.X * deltaTime * 2;
-				} if (Velocity.Y < MaxSpeed || Velocity.Y > MaxSpeed) {
-					Velocity.Y += Acceleration.Y * deltaTime * 2;
-				} else if (Velocity.Y > -MaxSpeed && Velocity.Y < -MaxSpeed) {
-					Velocity.Y -= Acceleration.Y * deltaTime * 2;
-				}
+
+				Velocity += Acceleration * deltaTime;
 
 				Position += Velocity * deltaTime;
-				Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+				Console.WriteLine(Position);
 				Acceleration *= 0;
 			}
-		}
 
-		private void BounceEdges()
-		{
-			float scr_width = Settings.ScreenSize.X;
-			float scr_height = Settings.ScreenSize.Y;
-			float spr_width = TextureSize.X;
-			float spr_height = TextureSize.Y;
-
-            if (Position.X + spr_width / 2 > scr_width)
-            {
-				Position = new Vector2(scr_width - spr_width / 2, Position.Y);
-				Color = Color.RED;
-            }
-            else if (Position.X - spr_width / 2 < 0)
-            {
-				Position = new Vector2(spr_width / 2, Position.Y);
-				Color = Color.BLUE;
-            }
-            if (Position.Y + spr_height / 2 > scr_height)
-            {
-				Position = new Vector2(Position.X, scr_height - spr_height / 2);
-				Color = Color.GREEN;
-            }
-            else if (Position.Y - spr_height / 2 < 0)
-            {
-				Position = new Vector2(Position.X, spr_height / 2);
-				Color = Color.YELLOW;
-            }
-			if (Position.X > scr_width || Position.X < 0 || Position.Y > scr_height || Position.Y < 0)
-			{
-				Position = new Vector2(scr_width / 2, scr_height / 2);
-			}
+			Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
 		}
 	}
 }
